@@ -17,7 +17,7 @@
     iframe {
       border: none;
       width: 100%;
-      height: 1400px;
+      height: 800px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
     .bottom-bar {
@@ -27,21 +27,30 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 60px;
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       font-weight: 600;
       letter-spacing: 1px;
       box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
     }
-    .time, .lesson {
+    .time, .lesson, .date {
       padding: 20px 40px;
       background: rgba(255,255,255,0.1);
       border-radius: 20px;
     }
     .time {
-      text-align: left;
+      text-align: center;
+      flex: 1;
+    }
+    .date {
+      text-align: center;
+      flex: 1;
     }
     .lesson {
-      text-align: right;
+      text-align:center;
+      flex: 1;
+    }
+    .bottom-bar > div {
+      margin: 0 10px;
     }
   </style>
 </head>
@@ -51,56 +60,70 @@
 
   <div class="bottom-bar">
     <div class="time" id="time"></div>
+    <div class="date" id="date"></div>
     <div class="lesson" id="lesson"></div>
   </div>
 
   <script>
     function updateTimeAndLesson() {
-      const now = new Date();
-      const timeEl = document.getElementById('time');
-      const lessonEl = document.getElementById('lesson');
-
-      // Format time with seconds HH:MM:SS
-      let hours = now.getHours();
-      let minutes = now.getMinutes();
-      let seconds = now.getSeconds();
-      if (minutes < 10) minutes = "0" + minutes;
-      if (seconds < 10) seconds = "0" + seconds;
-      timeEl.textContent = hours + ":" + minutes + ":" + seconds;
-
-      // Schedule mapping
-      const schedule = [
-        { start: "08:30", end: "08:50", name: "Thrive" },
-        { start: "08:55", end: "09:55", name: "Lesson 1" },
-        { start: "09:55", end: "10:20", name: "Break" },
-        { start: "10:25", end: "11:25", name: "Lesson 2" },
-        { start: "11:30", end: "12:30", name: "Lesson 3" },
-        { start: "12:30", end: "13:20", name: "Lunch" },
-        { start: "13:25", end: "14:25", name: "Lesson 4" },
-        { start: "14:30", end: "15:30", name: "Lesson 5" },
-        { start: "15:30", end: "17:25", name: "After School Clubs" }
-      ];
-
-      const current = now.getHours() * 60 + now.getMinutes();
-      let currentLesson = "No School";
-
-      for (const period of schedule) {
-        const [sh, sm] = period.start.split(":").map(Number);
-        const [eh, em] = period.end.split(":").map(Number);
-        const startMinutes = sh * 60 + sm;
-        const endMinutes = eh * 60 + em;
-
-        if (current >= startMinutes && current < endMinutes) {
-          currentLesson = period.name;
-          break;
-        }
-      }
-
-      lessonEl.textContent = currentLesson;
+    const now = new Date();
+    const timeEl = document.getElementById('time');
+    const lessonEl = document.getElementById('lesson');
+    const dateEl = document.getElementById('date');
+    
+    
+    // Format time with seconds HH:MM:SS
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let seconds = now.getSeconds();
+    if (minutes < 10) minutes = "0" + minutes;
+    if (seconds < 10) seconds = "0" + seconds;
+    timeEl.textContent = hours + ":" + minutes + ":" + seconds;
+    
+    
+    // Format date (e.g., Monday, 22 September 2025)
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dateEl.textContent = now.toLocaleDateString(undefined, options);
+    
+    
+    // Schedule mapping
+    const schedule = [
+    { start: "08:30", end: "08:50", name: "Thrive" },
+    { start: "08:55", end: "09:55", name: "Lesson 1" },
+    { start: "09:55", end: "10:20", name: "Break" },
+    { start: "10:25", end: "11:25", name: "Lesson 2" },
+    { start: "11:30", end: "12:30", name: "Lesson 3" },
+    { start: "12:30", end: "13:20", name: "Lunch" },
+    { start: "13:25", end: "14:25", name: "Lesson 4" },
+    { start: "14:30", end: "15:30", name: "Lesson 5" },
+    { start: "15:30", end: "17:25", name: "After School Clubs" }
+    ];
+    
+    
+    const current = now.getHours() * 60 + now.getMinutes();
+    let currentLesson = "No School";
+    
+    
+    for (const period of schedule) {
+    const [sh, sm] = period.start.split(":").map(Number);
+    const [eh, em] = period.end.split(":").map(Number);
+    const startMinutes = sh * 60 + sm;
+    const endMinutes = eh * 60 + em;
+    
+    
+    if (current >= startMinutes && current < endMinutes) {
+    currentLesson = period.name;
+    break;
     }
-
+    }
+    
+    
+    lessonEl.textContent = currentLesson;
+    }
+    
+    
     setInterval(updateTimeAndLesson, 1000);
     updateTimeAndLesson();
-  </script>
-</body>
-</html>
+    </script>
+    </body>
+    </html>
